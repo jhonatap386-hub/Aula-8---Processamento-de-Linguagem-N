@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank NLP - Triagem Automática</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏦 FinTech Digital - Triagem Inteligente</h1>
+            <p>Classificação de solicitações em tempo real com spaCy NLP</p>
+        </header>
+
+        <main class="grid">
+            <!-- Formulário de Entrada -->
+            <section class="card">
+                <h2>Nova Solicitação</h2>
+                <form action="/classificar" method="POST">
+                    <textarea name="texto_solicitacao" placeholder="Ex: Perdi meu cartão na rua e preciso bloquear urgente..." required>{{ texto_enviado if texto_enviado else '' }}</textarea>
+                    <button type="submit">Analisar com spaCy</button>
+                </form>
+
+                {% if resultado %}
+                <div class="result-box">
+                    <h3>Resultado da Análise:</h3>
+                    <div class="badge">{{ resultado.intencao }}</div>
+                    <p><small>Tokens Lematizados: {{ resultado.lemmas_detectados | join(', ') }}</small></p>
+                </div>
+                {% endif %}
+            </section>
+
+            <!-- Dashboard Pandas / SQLite3 -->
+            <section class="card">
+                <h2>📊 Painel de Atendimentos</h2>
+                <p>Total de Registros: <strong>{{ total }}</strong></p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Intenção</th>
+                            <th>Volume</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in metricas %}
+                        <tr>
+                            <td>{{ item.intencao }}</td>
+                            <td><strong>{{ item.total }}</strong></td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="2">Nenhuma solicitação gravada ainda.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
